@@ -51,3 +51,4 @@ pnx/backup-*.zip
 # PNX anarchy script backups
 pnx/pnx.yml.bak-*
 pnx/backup-*.zip
+image-search/
