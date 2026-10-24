@@ -105,6 +105,20 @@ public class VoidMenus extends PluginBase {
     // -------------------------------------------------------------------- open
 
     public boolean open(Player player, String id) {
+        try {
+            return this.openMenu(player, id);
+        } catch (Throwable t) {
+            // исключение внутри тика роняет весь сервер - ловим всё
+            this.getLogger().error("VoidMenus: ошибка при открытии меню '" + id + "': " + t);
+            try {
+                player.sendMessage("\u00a7cМеню сломалось, ошибка записана в лог");
+            } catch (Throwable ignored) {
+            }
+            return false;
+        }
+    }
+
+    private boolean openMenu(Player player, String id) {
         Menu menu = this.menus.get(id.toLowerCase(Locale.ROOT));
         if (menu == null) {
             player.sendMessage("\u00a7cМеню \u00a7f" + id + "\u00a7c не найдено");
@@ -134,22 +148,26 @@ public class VoidMenus extends PluginBase {
 
     private void runActions(Player player, List<Action> actions) {
         for (Action action : actions) {
-            String value = this.render(player, action.value);
-            switch (action.type) {
-                case "player":
-                    this.getServer().getCommandMap().executeCommand(player, value);
-                    break;
-                case "console":
-                    this.getServer().getCommandMap().executeCommand(this.getServer().getConsoleSender(), value);
-                    break;
-                case "menu":
-                    this.open(player, value);
-                    break;
-                case "message":
-                    player.sendMessage(value);
-                    break;
-                default:
-                    break; // close: форма закрывается сама
+            try {
+                String value = this.render(player, action.value);
+                switch (action.type) {
+                    case "player":
+                        this.getServer().getCommandMap().executeCommand(player, value);
+                        break;
+                    case "console":
+                        this.getServer().getCommandMap().executeCommand(this.getServer().getConsoleSender(), value);
+                        break;
+                    case "menu":
+                        this.open(player, value);
+                        break;
+                    case "message":
+                        player.sendMessage(value);
+                        break;
+                    default:
+                        break; // close: форма закрывается сама
+                }
+            } catch (Throwable t) {
+                this.getLogger().error("VoidMenus: ошибка в действии '" + action.type + " " + action.value + "': " + t);
             }
         }
     }

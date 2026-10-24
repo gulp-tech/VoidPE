@@ -82,8 +82,13 @@ lp group default permission set essentialsnk.warp false
 
 ## 0.3. VoidMenus — меню сервера (аналог DeluxeMenus)
 
-Готовый jar: `jars/VoidMenus.jar`. Ставится сразу после Essentials, потому что кнопки меню
-вызывают его команды (`spawn`), а позже — магазин и регионы.
+Готовый jar: `jars/VoidMenus.jar` (**1.2.0**, 9624 Б, MD5 `336FDEC775F3F779F57C5F1AA4FB5835`).
+Ставится сразу после Essentials, потому что кнопки меню вызывают его команды (`spawn`),
+а позже — магазин и регионы.
+
+История: 1.1.0 падала на живом сервере — `Player.getPing()` в PNX 3.0.5 возвращает `long`,
+а не `int`; исключение вылетало в тике игрока и валило весь сервер. В 1.2.0 сигнатура `long`
+плюс `try/catch (Throwable)` вокруг открытия меню и каждого действия кнопки.
 
 - `/menu`, `/menu <id>`, `/menu reload` (`voidmenus.admin`);
 - меню описываются в `plugins/VoidMenus/menus.yml` (родные формы Bedrock: кнопки, картинки, `\n`);
@@ -97,7 +102,8 @@ lp group default permission set essentialsnk.warp false
 3. «Инфо» → второе меню, «Назад» возвращает в главное;
 4. `§7` в `content` показывает онлайн и TPS, `{ping}` — твой пинг;
 5. правка `menus.yml` + `/menu reload` → изменения видны без рестарта;
-6. `/menu nope` → «Меню nope не найдено» по-русски.
+6. `/menu nope` → «Меню `nope` не найдено» по-русски;
+7. после клика по кнопкам **сервер не выключается** (нет `Exception happened while ticking server`).
 
 ## 1. Astra (античит) — ✅ настроен
 
