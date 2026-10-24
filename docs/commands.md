@@ -63,6 +63,36 @@ Start-BitsTransfer -Source "https://github.com/KoshakMineDEV/Lumi/releases/downl
 
 </details>
 
+### A1-bis. Папка на рабочем столе (вариант «чтобы под рукой»)
+
+```powershell
+$desk = [Environment]::GetFolderPath('Desktop')   # сам найдёт и обычный Desktop, и OneDrive\Desktop
+New-Item -ItemType Directory -Path "$desk\Lumi" -Force | Out-Null
+Set-Location "$desk\Lumi"
+$desk   # покажет, куда именно создалась папка
+```
+
+Дальше — всё то же самое, но уже внутри `Lumi`:
+
+```powershell
+curl.exe --ssl-no-revoke -L -o Lumi-1.6.9.jar "https://github.com/KoshakMineDEV/Lumi/releases/download/v1.6.9-19bfccbff1b6c1ae793857536050e658c198cd4e/Lumi-1.6.9.jar"
+Get-Item Lumi-1.6.9.jar | Select-Object Name, @{n='MB';e={[math]::Round($_.Length/1MB,1)}}
+```
+
+И создать `start.bat`, чтобы потом запускать двойным кликом:
+
+```powershell
+@'
+@echo off
+cd /d "%~dp0"
+java -Xms2G -Xmx2G -XX:+UseG1GC -jar Lumi-1.6.9.jar
+pause
+'@ | Set-Content -Path start.bat -Encoding ASCII
+```
+
+> На русской Windows рабочий стол может быть в `C:\Users\<имя>\OneDrive\Рабочий стол` —
+> `[Environment]::GetFolderPath('Desktop')` возвращает правильный путь в обоих случаях.
+
 ### A2. Первый запуск
 
 ```powershell
