@@ -41,11 +41,13 @@
 
 ---
 
-## Тематика: анархия (как NeverTime)
+## Тематика: анархия
 
-Настроить PNX под анархию (нет приватов, PvP, грифинг, экономика/магазины) —
-**[`docs/anarchy.md`](docs/anarchy.md)** + готовый скрипт правки конфига
-[`pnx/anarchy-config.ps1`](pnx/anarchy-config.ps1).
+| Вариант | Что это | Гайд |
+|---|---|---|
+| **Лайт-анархия** (FunTime / HolyWorld) | гриф и PvP разрешены, но есть **регионы**, безопасный спавн, античит, запрет крашей | **[`docs/lite-anarchy.md`](docs/lite-anarchy.md)** + [`pnx/lite-anarchy-config.ps1`](pnx/lite-anarchy-config.ps1) |
+| Чистый хаос (NeverTime-стайл без приватов) | нет регионов и защиты спавна | [`docs/anarchy.md`](docs/anarchy.md) + [`pnx/anarchy-config.ps1`](pnx/anarchy-config.ps1) |
+| Правила сервера | готовый текст для Discord/сайта | [`docs/rules.md`](docs/rules.md) |
 
 ## 1. Что нужно поставить на машину
 
