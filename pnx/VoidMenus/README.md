@@ -45,3 +45,17 @@ menus:
 Логика прогнана на заглушках API (ECJ + Temurin 25): загрузка меню из конфига,
 рендер меток, картинки PATH/URL, все пять типов действий, права на меню и на кнопку,
 `/menu`, `/menu <id>`, консоль — 20/20 PASS.
+
+## Грабли API PNX 3.0.5 (проверено на живом сервере)
+
+1. `Server.getCommandMap()` возвращает **`SimpleCommandMap`**, а не `CommandMap`
+   (интерфейс). Если скомпилировать под `CommandMap`, сервер падает с
+   `NoSuchMethodError: 'org.powernukkitx.command.CommandMap org.powernukkitx.Server.getCommandMap()'`
+   и плагин выключается. Компилировать строго против `SimpleCommandMap`.
+2. `Server.dispatchCommand(...)` в 3.0.5 **нет**. Команды из кнопок запускаются через
+   `getServer().getCommandMap().executeCommand(sender, commandLine)`.
+3. `Server.getOnlinePlayers()` возвращает `Map<UUID, Player>` — для онлайна `size()`.
+4. Два jar одного плагина в `plugins/` → `Невозможно загрузить "...": плагин уже существует`,
+   и грузится не тот, что ожидаешь. Один плагин — один jar.
+5. Браузер сохраняет повторную загрузку как `VoidMenus (1).jar` / `(2)` — копировать
+   лучше так: `Copy-Item -LiteralPath "$env:USERPROFILE\Downloads\VoidMenus.jar" -Destination "plugins\VoidMenus.jar" -Force`.
