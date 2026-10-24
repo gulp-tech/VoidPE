@@ -72,7 +72,7 @@ $targets = [ordered]@{
     'asyncWorkers'                    = @('"auto"',                            'async-потоки')
 
     # Сеть
-    'query'                           = @('true',                              'query для мониторингов')
+    'enableQuery'                     = @('true',                              'query для мониторингов (в 3.0.5 ключ называется enableQuery)')
     'queryPlugins'                    = @('false',                             'не палить список плагинов')
 }
 

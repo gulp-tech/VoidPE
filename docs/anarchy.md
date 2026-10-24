@@ -51,7 +51,7 @@ $targets = [ordered]@{
   'spawnProtection'='0'; 'pvp'='true'; 'difficulty'='3'; 'gamemode'='0'; 'forceGamemode'='false'
   'enableExplosionBlockDamage'='true'; 'enableEntitySpawning'='true'; 'viewDistance'='6'
   'entitySpawnCap'='512'; 'chunkUnloadDelay'='15000'; 'tickRadius'='4'
-  'query'='true'; 'queryPlugins'='false'; 'announceAchievements'='false'
+  'enableQuery'='true'; 'queryPlugins'='false'; 'announceAchievements'='false'
 }
 if (Get-CimInstance Win32_Process -Filter "Name='java.exe'" | Where-Object { $_.CommandLine -match 'powernukkitx\.jar' }) {
   'СЕРВЕР ЗАПУЩЕН — сначала stop в его консоли!'
@@ -98,7 +98,7 @@ if (Get-CimInstance Win32_Process -Filter "Name='java.exe'" | Where-Object { $_.
 | `xboxAuth` | `true` | оставь `true`; `false` = оффлайн/пиратка (см. п.7) |
 | `entitySpawnCap` | `512` | потолок сущностей на мир |
 | `tickRadius` | `4` | радиус симуляции чанков |
-| `query` | `true` | мониторинги (список серверов) |
+| `enableQuery` | `true` | query для мониторингов (в PNX 3.0.5 ключ называется `enableQuery`, не `query`) |
 
 После этого запусти сервер и добей правила командами (консоль):
 
@@ -202,7 +202,7 @@ Get-ChildItem plugins | Select-Object Name, @{n='KB';e={[math]::Round($_.Length/
 
 Анти-бот/рейт-лимиты (раздел `network-settings`) — оставь дефолты, но проверь:
 
-- `query: true`, а `queryPlugins: false` (чтобы не палить список плагинов);
+- `enableQuery: true`, а `queryPlugins: false` (чтобы не палить список плагинов);
 - `rate-limit` / `botnet` — не отключай: на публичной анархии бот-атаки начнутся в первую неделю.
 
 ---
