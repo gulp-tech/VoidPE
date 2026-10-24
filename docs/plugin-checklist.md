@@ -12,6 +12,74 @@
 - [ ] Русский язык ядра: `pnx.yml` -> `language: rus` (в ядре есть папка `language/rus`),
       иначе все системные сообщения (вход, выход, ошибки команд) остаются английскими
 
+## 0.1. СБРОС: оставляем только LuckPerms + EssentialsPNX
+
+Всё остальное (Astra, AnyVersion, PlaceholderAPI, Scoreboard, LlamaEconomy, ShopUI,
+SRegionProtector, VoidChat) уезжает в `plugins_off\` — не удаляется, чтобы вернуть одной строкой.
+Папки с настройками переезжают туда же.
+
+```powershell
+cd C:\Users\Рустам\Desktop\PNX
+New-Item -ItemType Directory -Force plugins_off | Out-Null
+Get-ChildItem plugins -Filter *.jar | Where-Object { $_.BaseName -notmatch '^(LuckPerms|EssentialsPNX)' } |
+    Move-Item -Destination plugins_off -Force
+Get-ChildItem plugins -Directory | Where-Object { $_.Name -notmatch '^(LuckPerms|EssentialsPNX|EssentialsNK)' } |
+    Move-Item -Destination plugins_off -Force
+Get-ChildItem plugins | Select-Object Name
+```
+
+Вернуть плагин потом: `Move-Item plugins_off\VoidChat.jar plugins\`.
+
+## 0.2. EssentialsPNX — базовые команды
+
+Факты из исходников (`EssentialsNK.java`, `EssentialsAPI.java`, `CommandManager.java`):
+
+- **язык берётся из языка ядра**: `Language.load(getServer().getLanguage().getLang())` →
+  в jar лежат `lang/eng.ini`, `lang/rus.ini`, … Поэтому `language: rus` в `pnx.yml`
+  автоматически даёт русские сообщения Essentials — отдельный перевод не нужен;
+- **`/setspawn` пишет точку спавна прямо в уровень** (`level.setSpawnLocation(round())`
+  + `setDefaultLevel`) → сохраняется в мире, после рестарта на месте;
+- `/spawn` телепортит на спавн **дефолтного уровня**, гоняет через `api.onTP`;
+- кулдауны — это права, а не конфиг: `essentialsnk.cooldown.<сек>` (общий КД команд),
+  `essentialsnk.tp.cooldown.<сек>` (задержка перед телепортом, `TeleportationTask`),
+  `essentialsnk.homes.<n>` (лимит домов). Нет права — нет кулдауна/домов;
+- `message`, `reply`, `ignore` **не описаны** в `plugin.yml` → их надо выдать руками
+  через LuckPerms, иначе у обычных игроков `/msg` не работает;
+- файлы данных: `home.yml`, `warp.yml`, `mute.yml`, `ignore.yml` в папке плагина.
+
+Набор для лайт-анархии (без домов и tpa — их роль играют регионы):
+
+```powershell
+lp group default permission set essentialsnk.spawn true
+lp group default permission set essentialsnk.back true
+lp group default permission set essentialsnk.message true
+lp group default permission set essentialsnk.reply true
+lp group default permission set essentialsnk.ignore true
+lp group default permission set essentialsnk.ping true
+lp group default permission set essentialsnk.getpos true
+lp group default permission set essentialsnk.compass true
+lp group default permission set essentialsnk.depth true
+lp group default permission set essentialsnk.itemdb true
+lp group default permission set essentialsnk.tp.cooldown.5 true
+
+lp group default permission set essentialsnk.home false
+lp group default permission set essentialsnk.sethome false
+lp group default permission set essentialsnk.delhome false
+lp group default permission set essentialsnk.tpa false
+lp group default permission set essentialsnk.tpaccept false
+lp group default permission set essentialsnk.tpdeny false
+lp group default permission set essentialsnk.tpahere false
+lp group default permission set essentialsnk.warp false
+```
+
+Приёмка:
+1. `/plugins` → ровно **LuckPerms + EssentialsPNX**, оба зелёные;
+2. `/setspawn` (оп) → «точка спавна установлена» **по-русски**, после рестарта `/spawn` ведёт туда же;
+3. `/home` и `/tpa MUSD38` → «нет прав» по-русски;
+4. `/msg MUSD38 привет` и `/r ответ` → работают;
+5. `/ping`, `/getpos`, `/compass` → работают;
+6. `/spawn` с задержкой 5 секунд и сообщением о задержке.
+
 ## 1. Astra (античит) — ✅ настроен
 
 Правки: `plugins/Astra/config.json`
