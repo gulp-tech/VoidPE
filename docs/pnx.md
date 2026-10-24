@@ -168,6 +168,54 @@ RakNet listening on udp/19132
   сделан проброс **UDP 19132** на `192.168.0.227` (или включён UPnP), а провайдер даёт «белый» IP.
   Проверка: с мобильного интернета (не Wi-Fi) добавить сервер по внешнему адресу.
 
+## 5b. Плагины под Java 25 (class file version 69)
+
+Часть свежих плагинов (например `ShopUI 2.0.x`) собирается под **Java 25**, а не 21.
+На сервере с Java 21 они падают так:
+
+```
+java.lang.UnsupportedClassVersionError: org/powernukkitx/shopui/ShopUI
+has been compiled by a more recent version of the Java Runtime (class file version 69.0),
+this version of the Java Runtime only recognizes class file versions up to 65.0
+```
+
+Соответствие: class `65` = Java 21, class `69` = Java 25. Сам PNX работает и на 21, и на 25
+(официальный Docker-образ PNX вообще использует Temurin **25**), поэтому безопаснее поставить 25.
+
+```powershell
+winget install --id EclipseAdoptium.Temurin.25.JDK -e
+# альтернатива: winget install --id Azul.Zulu.25.JDK -e
+```
+
+Затем перепиши `start.bat` так, чтобы он брал именно 25-ю Java (в PATH может остаться 21-я):
+
+```powershell
+$jdk = Get-ChildItem 'C:\Program Files\Eclipse Adoptium' -Directory -Filter 'jdk-25*' |
+       Sort-Object Name -Descending | Select-Object -First 1
+$java = Join-Path $jdk.FullName 'bin\java.exe'
+& $java -version    # убедись, что пишет 25
+
+$bat = @(
+    '@echo off'
+    'chcp 65001 >nul'
+    'cd /d "%~dp0"'
+    ('"' + $java + '" -Xms2G -Xmx2G -Dfile.encoding=UTF-8 -XX:+UseG1GC ^')
+    ' --add-opens java.base/java.lang=ALL-UNNAMED ^'
+    ' --add-opens java.base/java.io=ALL-UNNAMED ^'
+    ' --add-opens java.base/java.net=ALL-UNNAMED ^'
+    ' --enable-native-access=ALL-UNNAMED ^'
+    ' -jar powernukkitx.jar %*'
+    'pause'
+)
+[IO.File]::WriteAllLines((Join-Path $PWD 'start.bat'), $bat)
+```
+
+Альтернатива без установки Java 25 — удалить несовместимый плагин:
+
+```powershell
+Remove-Item plugins\ShopUI.jar -Force
+```
+
 ## 6. Настройка `pnx.yml`
 
 > ⚠️ Останавливай сервер (`stop`) перед правкой: при выключении PNX перезаписывает
@@ -281,7 +329,8 @@ Compress-Archive -Path worlds, players, plugins, pnx.yml -DestinationPath "backu
 
 | Симптом | Причина / решение |
 |---|---|
-| `UnsupportedClassVersionError` | Java < 21 |
+| `UnsupportedClassVersionError: ... class file version 69.0 ... up to 65.0` | плагин собран под **Java 25** (class 69), а сервер запущен на **Java 21** (class 65). Поставь JDK 25 и укажи его в `start.bat` (см. ниже) |
+| `UnsupportedClassVersionError` (другие номера) | Java старее требуемой плагином версии |
 | `IllegalAccessError` / `InaccessibleObjectException` при старте | нет `--add-opens` — используй `start.bat` из п.3 |
 | `BindException: Address already in use` | порт 19132 занят (запущен Lumi!) — закрой его или поменяй `port` в `pnx.yml` |
 | `java: command not found` | Java не в PATH, переустанови Temurin 21 и перезапусти консоль |

@@ -177,6 +177,33 @@ Get-ChildItem plugins | Select-Object Name, @{n='KB';e={[math]::Round($_.Length/
 
 ---
 
+## 4a. EssentialsPNX на анархии: отключить телепорты
+
+`EssentialsPNX` по умолчанию **разрешает всем** (`true`) команды, которые убивают анархию:
+`/home`, `/sethome`, `/tpa`, `/tpaccept`, `/tpdeny`, `/warp`, `/spawn`, `/back`, `/tpaall`.
+
+Так как LuckPerms у тебя уже стоит, проще всего запретить эти права группе `default`:
+
+```
+lp creategroup anarchy
+lp group default parent set anarchy
+lp group default permission set essentialsnk.home false
+lp group default permission set essentialsnk.sethome false
+lp group default permission set essentialsnk.delhome false
+lp group default permission set essentialsnk.tpa false
+lp group default permission set essentialsnk.tpaccept false
+lp group default permission set essentialsnk.tpdeny false
+lp group default permission set essentialsnk.warp false
+lp group default permission set essentialsnk.spawn false
+lp group default permission set essentialsnk.back false
+lp group default permission set essentialsnk.tpaall false
+```
+
+Оставляем полезное и безобидное: `/ping`, `/compass`, `/depth`, `/getpos`, `/itemdb`, `/ignore`.
+
+> Если LuckPerms ещё не инициализирован (нет прав `lp`), удали `EssentialsPNX.jar` —
+> для анархии он не обязателен, а телепорты ломают режим.
+
 ## 5. Производительность: главное узкое место
 
 Анархия = гигантские постройки, тысячи сущностей, ТНТ-машины. Домашний ПК не тянет 100 игроков.
