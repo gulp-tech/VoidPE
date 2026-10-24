@@ -1,0 +1,77 @@
+# =====================================================================
+#  VoidPE — config.yml для LlamaEconomy
+#  Куда положить:  <папка сервера>\plugins\LlamaEconomy\config.yml
+#  После правки Provider/DefaultMoney/команд — ПЕРЕЗАПУСК сервера
+#  (в отличие от messages.yml, который перечитывается через /lecoreload).
+# =====================================================================
+
+# yaml — без внешней БД (для старта самое то), mysql/mongodb — для сети серверов
+Provider: "yaml"
+
+# Стартовый баланс нового игрока
+DefaultMoney: 1000.0
+
+# Символ валюты, подставляется как [0]/[1] в сообщениях
+MonetaryUnit: "$"
+
+# --- MongoDB (не используется при Provider: yaml) ---
+MongoDB:
+  Uri: "mongodb://localhost:27017"
+  Database: "llamaeconomy"
+
+# --- MySQL (не используется при Provider: yaml) ---
+MySql:
+  Host: "127.0.0.1"
+  Port: "3306"
+  User: "root"
+  Password: "change-me"
+  Database: "llamaeconomy"
+
+# Команды. Parameters менять НЕЛЬЗЯ, можно менять Name/Aliases/Description/Usage/Permission
+Commands:
+  Addmoney:
+    Name: "addmoney"
+    Description: "Начислить деньги игроку"
+    Usage: "/addmoney <игрок> <сумма>"
+    Permission: "llamaeconomy.addmoney"
+    Parameters: "player;amount"
+    Aliases: ["givemoney", "baladd"]
+  Money:
+    Name: "money"
+    Description: "Показать баланс"
+    Usage: "/money [игрок]"
+    Parameters: "player"
+    Aliases: ["mymoney", "getmoney", "bal", "balance"]
+  Pay:
+    Name: "pay"
+    Description: "Перевести деньги игроку"
+    Usage: "/pay <игрок> <сумма>"
+    Parameters: "player;amount"
+    Aliases: ["balpay"]
+  Reducemoney:
+    Name: "reducemoney"
+    Description: "Списать деньги у игрока"
+    Usage: "/reducemoney <игрок> <сумма>"
+    Permission: "llamaeconomy.reducemoney"
+    Parameters: "player;amount"
+    Aliases: ["takemoney", "baltake"]
+  Setmoney:
+    Name: "setmoney"
+    Description: "Установить баланс игрока"
+    Usage: "/setmoney <игрок> <сумма>"
+    Permission: "llamaeconomy.setmoney"
+    Parameters: "player;amount"
+    Aliases: ["balset"]
+  Topmoney:
+    Name: "topmoney"
+    Description: "Топ богачей"
+    Usage: "/topmoney [страница]"
+    Parameters: "page"
+    Aliases: ["baltop"]
+  Lecoreload:
+    Name: "lecoreload"
+    Description: "Перечитать messages.yml без рестарта"
+    Usage: "/lecoreload"
+    Permission: "llamaeconomy.reload"
+    Parameters: ""
+    Aliases: ["lreload", "ecoreload"]

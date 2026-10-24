@@ -211,6 +211,29 @@ Astra — DEV-версия, не панацея: ловит грубые фла�
 
 ---
 
+## 4b. Брендинг и локализация LlamaEconomy (VoidPE)
+
+Готовые файлы в репозитории:
+
+| Файл | Куда |
+|---|---|
+| `pnx/LlamaEconomy/messages.yml` | `plugins/LlamaEconomy/messages.yml` |
+| `pnx/LlamaEconomy/config.yml` | `plugins/LlamaEconomy/config.yml` |
+
+Что внутри: префикс `§8» §6§lVoidPE §8| §e`, все сообщения на русском,
+стартовый баланс `1000`, валюта `$`, алиасы `/bal`, `/baltop`, `/pay`.
+
+```powershell
+cd "$([Environment]::GetFolderPath('Desktop'))\PNX"
+Copy-Item .\LlamaEconomy\messages.yml .\plugins\LlamaEconomy\messages.yml -Force
+Copy-Item .\LlamaEconomy\config.yml   .\plugins\LlamaEconomy\config.yml   -Force
+```
+
+- `messages.yml` применяется **без рестарта**: `/lecoreload`;
+- `config.yml` (валюта, стартовый баланс, алиасы) — **только рестартом**;
+- плейсхолдеры `[0]`, `[1]`… в сообщениях не трогать — это подстановки плагина;
+- символ валюты задаётся в `config.yml` → `MonetaryUnit`, в тексте он появляется как `[0]`/`[1]`.
+
 ## 5. Правила (готовый текст)
 
 Лежит в [`docs/rules.md`](rules.md) — вставляй в Discord/на сайт/в `/rules`.
