@@ -1,0 +1,133 @@
+# VoidMenus - главное меню VoidPE (как на Java-серверах: сундук с предметами)
+# Файл: plugins/VoidMenus/menus/menu.yml   (один файл = одно меню)
+# После правки: /menu reload
+#
+# click_commands:
+#   [player] команда   - от имени игрока
+#   [console] команда  - от консоли
+#   [menu] id          - открыть другое меню
+#   [message] текст    - сообщение игроку
+#   [close]            - закрыть меню
+#   [sound] ...        - игнорируется (в Bedrock звук другой)
+#
+# Метки: {player} {online} {max} {tps} {ping} {world} {motd}, плюс %player_name%
+# Цвета: &7 &a ... и hex &#00F15E (Bedrock покажет ближайший из 16 цветов)
+
+menu_title: '• Меню сервера'
+open_command: menu
+size: 54
+
+items:
+  Информация:
+    slots: [13]
+    material: head-{player}
+    display_name: '&f{player}'
+    lore:
+      - ''
+      - '&fТвоя статистика:'
+      - '&7• &fОнлайн: &#00F15E{online}'
+      - '&7• &fПинг: &#00F15E{ping} мс'
+      - '&7• &fTPS: &#00F15E{tps}'
+      - '&7• &fМир: &#00F15E{world}'
+
+  'Автошахта':
+    slots: [28]
+    material: NETHERITE_PICKAXE
+    display_name: '&aАвтошахта &7/mine'
+    lore:
+      - ''
+      - '&f Телепорт на автошахту,'
+      - '&f где можно копать ресурсы.'
+      - ''
+      - '&a➥ &fНажмите, чтобы отправиться.'
+    click_commands:
+      - '[message] &7Автошахта появится вместе с регионами'
+      - '[close]'
+
+  'Спавн':
+    slots: [30]
+    material: COMPASS
+    display_name: '&aСпавн &7/spawn'
+    lore:
+      - ''
+      - '&f Возврат на точку появления.'
+      - ''
+      - '&a➥ &fНажмите, чтобы отправиться.'
+    click_commands:
+      - '[player] spawn'
+      - '[close]'
+
+  'Назад':
+    slots: [32]
+    material: ENDER_PEARL
+    display_name: '&aНазад &7/back'
+    lore:
+      - ''
+      - '&f Вернуться туда, где ты был'
+      - '&f до смерти или телепорта.'
+      - ''
+      - '&a➥ &fНажмите, чтобы вернуться.'
+    click_commands:
+      - '[player] back'
+      - '[close]'
+
+  'PvP Арена':
+    slots: [34]
+    material: NETHERITE_SWORD
+    display_name: '&aPvP Арена &7/warp pvp'
+    lore:
+      - ''
+      - '&f Телепорт на PvP-арену.'
+      - '&f Сражайтесь с другими игроками!'
+      - ''
+      - '&a➥ &fНажмите, чтобы отправиться.'
+    click_commands:
+      - '[message] &7Арена откроется вместе с регионами'
+      - '[close]'
+
+  'Случайный телепорт':
+    slots: [39]
+    material: CHORUS_FRUIT
+    display_name: '&aСлучайный телепорт &7/rtp'
+    lore:
+      - ''
+      - '&f Случайный телепорт в мир выживания.'
+      - '&f Кулдаун: &b15 секунд&f.'
+      - ''
+      - '&a➥ &fНажмите, чтобы отправиться.'
+    click_commands:
+      - '[message] &7/rtp появится позже'
+      - '[close]'
+
+  'Донат-магазин':
+    slots: [41]
+    material: NETHERITE_INGOT
+    display_name: '&aДонат-магазин &7/shop'
+    lore:
+      - ''
+      - '&f Магазин кастомных предметов'
+      - '&f за монеты и осколки.'
+      - ''
+      - '&a➥ &fНажмите, чтобы открыть.'
+    click_commands:
+      - '[message] &7Магазин появится вместе с экономикой'
+      - '[close]'
+
+  'О сервере':
+    slots: [31]
+    material: BOOK
+    display_name: '&aО сервере'
+    lore:
+      - ''
+      - '&bVoidPE &f— Bedrock-сервер выживания.'
+      - ''
+      - '&fПолезные команды:'
+      - '&7• &f/menu &7— это меню'
+      - '&7• &f/spawn &7— точка появления'
+      - '&7• &f/back &7— вернуться назад'
+      - '&7• &f/list &7— кто онлайн'
+      - '&7• &f/ping &7— свой пинг'
+      - ''
+      - '&fПриятной игры!'
+    click_commands:
+      - '[close]'

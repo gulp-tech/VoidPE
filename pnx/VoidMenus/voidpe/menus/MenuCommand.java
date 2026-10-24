@@ -25,16 +25,22 @@ public class MenuCommand extends Command {
         Player player = (Player) sender;
 
         if (args.length == 0) {
-            return this.plugin.open(player, "main");
+            return this.plugin.openMain(player);
         }
 
-        if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.hasPermission("voidmenus.admin")) {
+        String first = args[0].toLowerCase(java.util.Locale.ROOT);
+        if (first.equals("reload")) {
+            if (!sender.hasPermission("voidmenus.admin") && !sender.isOp()) {
                 sender.sendMessage("§cНет прав");
                 return false;
             }
             this.plugin.loadMenus();
             sender.sendMessage("§aМеню перезагружены: §f" + this.plugin.menuCount());
+            return true;
+        }
+
+        if (first.equals("list")) {
+            sender.sendMessage("§eМеню: §f" + String.join("§7, §f", this.plugin.menuIds()));
             return true;
         }
 

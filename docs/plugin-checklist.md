@@ -80,30 +80,32 @@ lp group default permission set essentialsnk.warp false
 5. `/ping`, `/getpos`, `/compass` → работают;
 6. `/spawn` с задержкой 5 секунд и сообщением о задержке.
 
-## 0.3. VoidMenus — меню сервера (аналог DeluxeMenus)
+## 0.3. VoidMenus 2.0.0 — меню в стиле DeluxeMenus (сундук с предметами)
 
-Готовый jar: `jars/VoidMenus.jar` (**1.2.0**, 9624 Б, MD5 `336FDEC775F3F779F57C5F1AA4FB5835`).
-Ставится сразу после Essentials, потому что кнопки меню вызывают его команды (`spawn`),
-а позже — магазин и регионы.
+Готовый jar: `jars/VoidMenus.jar` (**2.0.0**, 20723 Б, MD5 `0D4320216C2FCB2B026EF299241E384F`).
+Собирается агентом, на сервере ничего компилировать не нужно.
 
-История: 1.1.0 падала на живом сервере — `Player.getPing()` в PNX 3.0.5 возвращает `long`,
-а не `int`; исключение вылетало в тике игрока и валило весь сервер. В 1.2.0 сигнатура `long`
-плюс `try/catch (Throwable)` вокруг открытия меню и каждого действия кнопки.
+- меню — настоящий сундук: `plugins/VoidMenus/menus/*.yml` (один файл = одно меню);
+- формат совместим с DeluxeMenus: `menu_title`, `open_command`, `size`, `items`,
+  `slots`, `material`, `display_name`, `lore`, `click_commands`;
+- действия: `[player]`, `[console]`, `[menu]`, `[message]`, `[close]` (`[sound]` игнорируется);
+- метки `{player} {online} {max} {tps} {ping} {motd} {world}` + `%player_name%` + PlaceholderAPI;
+- права: `voidmenus.use` (всем), `voidmenus.admin` (оп);
+- старый формат форм (`buttons:`) продолжает работать.
 
-- `/menu`, `/menu <id>`, `/menu reload` (`voidmenus.admin`);
-- меню описываются в `plugins/VoidMenus/menus.yml` (родные формы Bedrock: кнопки, картинки, `\n`);
-- действия кнопок: `player:` / `console:` / `menu:` / `message:` / `close`;
-- метки `{player} {online} {max} {tps} {ping} {motd} {world}` + PlaceholderAPI (если стоит);
-- права: `voidmenus.use` (всем), `voidmenus.admin` (оп).
+История: 1.1.0 падала на живом сервере — `Player.getPing()` в PNX 3.0.5 возвращает `long`.
+В 2.0.0 сигнатура `long`, `try/catch (Throwable)` вокруг открытия меню и каждого действия,
+а меню рисуются через `FakeInventory` с отменой клика (предмет нельзя забрать).
 
 Приёмка:
-1. `/menu` → форма «Меню» с кнопками Спавн / Инфо / Закрыть;
-2. «Спавн» → закрывает меню и телепортит на спавн (`/spawn` от игрока);
-3. «Инфо» → второе меню, «Назад» возвращает в главное;
-4. `§7` в `content` показывает онлайн и TPS, `{ping}` — твой пинг;
-5. правка `menus.yml` + `/menu reload` → изменения видны без рестарта;
-6. `/menu nope` → «Меню `nope` не найдено» по-русски;
-7. после клика по кнопкам **сервер не выключается** (нет `Exception happened while ticking server`).
+1. `/menu` → открывается сундук «• Меню сервера», 54 слота, предметы на местах;
+2. навести на «Информация» — видно ник и строки с онлайном/пингом/TPS;
+3. «Спавн» → телепорт на спавн и меню закрылось;
+4. «Назад» → возврат на прошлое место;
+5. предметы **нельзя забрать** в инвентарь (клик отменяется);
+6. правка `menus/menu.yml` + `/menu reload` → изменения видны без рестарта;
+7. `/menu nope` → «Меню nope не найдено»;
+8. сервер не выключается (нет `Exception happened while ticking server`).
 
 ## 1. Astra (античит) — ✅ настроен
 

@@ -1,6 +1,6 @@
 name: VoidMenus
 main: voidpe.menus.VoidMenus
-version: 1.2.0
+version: 2.0.0
 api: 3.0.0
 author: VoidPE
 description: Menus like DeluxeMenus, on native Bedrock forms
