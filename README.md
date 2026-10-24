@@ -35,6 +35,9 @@
 
 ## 2. Установка сервера (5 минут)
 
+> Нужны готовые команды для copy-paste (Windows / Linux, порт, tmux, обновление, бэкапы)?
+> → **[`docs/commands.md`](docs/commands.md)**
+
 ```bash
 cd server
 ./download.sh      # скачает последний Lumi-*.jar с GitHub Releases
