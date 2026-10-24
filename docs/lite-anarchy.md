@@ -350,7 +350,7 @@ Select-String -Path plugins\LlamaEconomy\config.yml -Pattern 'MonetaryUnit|Defau
 - Не поднимай цены скупки массовых ресурсов (тростник, пшеница, железо), иначе инфляция
   за неделю. Регулируй `sell` в `plugins/ShopUI/config.yml`.
 
-### 4.1c. Локальный / глобальный чат (плагин VoidChat)
+### 4.1c. Локальный / глобальный чат (плагин VoidChat 1.1.0)
 
 Готовый jar лежит в `jars/VoidChat.jar` (собран заранее, компилировать на сервере не нужно).
 PlaceholderChat удалён — VoidChat делает и чат, и ник над головой.
@@ -358,8 +358,29 @@ PlaceholderChat удалён — VoidChat делает и чат, и ник на
 - без `!` → локальный чат, радиус 100 блоков (тот же мир) + консоль;
 - с `!` → глобальный чат, `!` отрезается;
 - КД 2 с (`cooldown-seconds`), опам не действует;
-- плейсхолдеры `{player}` / `{message}` / `{seconds}`. **`{%0}`/`{%1}` не работают**:
+- плейсхолдеры PlaceholderAPI (`%money%`, `%player_ping%`, `%server_online%` …) работают
+  в формате чата, в нике и в сообщении о КД; подключаются по рефлексии, без PlaceholderAPI не падает;
+- свои метки `{player}` / `{message}` / `{seconds}`. **`{%0}`/`{%1}` не работают**:
   `BaseLang.parseLanguageText` съедает `%<слово>` раньше, чем `tr` подставит аргументы;
 - жирного `§l` нигде нет.
 
 Настройка — `plugins/VoidChat/config.yml`, установка и приёмка — `docs/plugin-checklist.md`, п. 3b.
+
+### 4.1d. Русификация ядра
+
+В ядре PNX есть языковые паки (`language/eng`, `language/rus`, …). По умолчанию `language: eng`,
+поэтому системные сообщения (вход/выход игрока, ошибки команд, кик-причины) английские.
+Переключение в `pnx.yml`:
+
+```powershell
+cd C:\Users\Рустам\Desktop\PNX
+Select-String -Path pnx.yml -Pattern "language"
+$p = (Resolve-Path pnx.yml).Path
+$t = Get-Content $p -Raw -Encoding UTF8
+$t = $t -replace '(?m)^(\s*)language:\s*eng', '${1}language: rus'
+[IO.File]::WriteAllText($p, $t, (New-Object System.Text.UTF8Encoding($false)))
+Select-String -Path pnx.yml -Pattern "language"
+```
+
+`force-translate` оставляем `false`: иначе ядро начнёт переводить названия предметов/блоков
+на серверной стороне и разойдётся с клиентом.

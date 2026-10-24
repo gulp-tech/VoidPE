@@ -1,4 +1,4 @@
-# VoidPE - чат и ник над головой (плагин VoidChat)
+# VoidPE — чат и ник над головой (плагин VoidChat)
 # Куда: <папка сервера>\plugins\VoidChat\config.yml
 # Читается один раз при включении -> после правки нужен рестарт сервера.
 # Файла может не быть: тогда работают те же значения, что ниже (по умолчанию).
@@ -9,14 +9,14 @@ radius: 100
 # Символ, с которого начинается сообщение в общий чат
 global-symbol: "!"
 
-# {player} = ник игрока, {message} = текст сообщения
-# НЕ используй {%0}/{%1}: ядро PNX съедает любой "%<слово>" в строке формата
+# Свои метки плагина: {player} = ник, {message} = текст, {seconds} = секунды до конца КД.
+# ВАЖНО, НЕ используй {%0}/{%1}: ядро PNX съедает любой "%<слово>" в строке формата
 # (BaseLang.parseLanguageText) — в чате останутся фигурные скобки.
 
-# Локальный чат - без метки перед ником
+# Локальный чат — без метки перед ником
 format-local: "§f{player}§8 » §7{message}"
 
-# Глобальный чат - метка [G]
+# Глобальный чат — метка [G]
 format-global: "§8[§6G§8] §f{player}§8 » §7{message}"
 
 # КД между сообщениями, в секундах (0 = выключить). Опам/админам не действует.
@@ -26,3 +26,16 @@ cooldown-message: "§7Не так быстро: подожди ещё §f{second
 # Ник над головой
 nametag-enabled: true
 nametag: "§8[§6VoidPE§8] §f{player}"
+
+# Поддержка PlaceholderAPI (если плагин установлен). Примеры:
+#   format-local: "§7[§a%player_ping%ms§7] §f{player}§8 » §7{message}"
+#   nametag:      "§8[§6VoidPE§8] §f{player} §8| §e%money%"
+# Работают: %player%, %player_displayname%, %player_nametag%, %player_ping%,
+#   %player_health%, %player_max_health%, %player_food%, %player_gamemode%,
+#   %player_exp%, %player_exp_level%, %player_platform%, %player_pos%,
+#   %player_item%, %player_offhand%, %player_level% (= название мира!),
+#   %server_online%, %server_max_players%, %server_motd%, %server_tps%, %server_cpu%,
+#   %level_tps%, %server_tick%, %server_version%, %server_protocol%, %time%,
+#   %time;HH:mm%, %money% (LlamaEconomy).
+# Плейсхолдеры разворачиваются в формате чата и в нике; текст игрока не трогается.
+placeholders: true
