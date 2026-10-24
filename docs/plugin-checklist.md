@@ -34,13 +34,13 @@ Reach/CPS — только предупреждение с правом `astra.v
 
 Приёмка: `%money%` подставляется (видно после настройки чата/скорборда).
 
-## 3. PlaceholderChat — ✅ настроен
+## 3. PlaceholderChat — ✅ настроен (ник над головой)
 
 `plugins/PlaceholderChat/config.yml` (см. `pnx/PlaceholderChat/config.yml`):
 
 ```yaml
 nametag: "§8[§6VoidPE§8] §f%player_displayname%"
-chatmessage: "§8[§6§lVoidPE§8] §f%player_displayname% §8» §7%message%"
+chatmessage: "§f%player_displayname%§8 » §7%message%"
 ```
 
 Факты из исходников:
@@ -50,11 +50,35 @@ chatmessage: "§8[§6§lVoidPE§8] §f%player_displayname% §8» §7%message%"
 - `%money%` появляется только если PlaceholderAPI включён **раньше** LlamaEconomy (в логе так и есть);
 - неизвестный плейсхолдер остаётся в тексте буквально.
 
-Приёмка: в чате `[VoidPE] Ник » текст`, над головой `[VoidPE] Ник`,
-`/placeholder %money%` → число.
+Жирный `§l` **удалён** — на VoidPE жирного текста в чате нет.
+После установки VoidChat (п. 3b) эта строка `chatmessage` в игре уже не видна:
+VoidChat перебивает формат на `EventPriority.HIGHEST`, а PlaceholderChat ставит свой на `HIGH`.
 
-Формат чата с брендом VoidPE и префиксом из LuckPerms.
-Приёмка: в чате `§8» §6§lVoidPE §8| §fНик §8» §7текст`.
+Приёмка: над головой `[VoidPE] Ник` (без жирного).
+
+## 3b. VoidChat — локальный (100 блоков) и глобальный (`!`) чат
+
+Готового плагина под это в Plugin Hub PNX **нет** (76 плагинов: чат — только PlaceholderChat
+и WelcomeMessage). Ядро PNX тоже не умеет радиус: в `Player.java` событие чата рассылается
+всем подписчикам `BROADCAST_CHANNEL_USERS`, ключа радиуса в `ServerSettings`/`pnx.yml` нет.
+Поэтому — свой микроплагин, компилируется на твоей машине тем же JDK 25 (20 секунд).
+
+Исходники в репозитории: `pnx/VoidChat/VoidChat.java`, `pnx/VoidChat/plugin.yml`,
+`pnx/VoidChat/config.yml`.
+
+Как работает:
+- сообщение **без** `!` → локальный чат: видят только игроки в радиусе 100 блоков (тот же мир) + консоль;
+- сообщение с `!` → глобальный чат: видят все, `!` отрезается;
+- формат `{%0}` = ник, `{%1}` = текст — эти подстановки делает само ядро
+  (`Player.java`: `lang.tr(chatEvent.getFormat(), {displayName, message})`);
+- если в радиусе никого нет — игроку приходит подсказка про `!`.
+
+Приёмка:
+1. `/plugins` → **VoidChat зелёный**;
+2. в чате `привет` → `Ник » привет` (без `[G]`);
+3. в чате `!привет` → `[G] Ник » привет` — второй игрок/консоль видит, `!` не виден;
+4. отойти на 150 блоков → локальное сообщение не доходит, глобальное с `!` доходит;
+5. в чате нет жирного текста.
 
 ## 4. Scoreboard
 

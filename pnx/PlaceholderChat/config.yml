@@ -1,6 +1,11 @@
-# VoidPE — формат чата и ников (PlaceholderChat)
+# VoidPE — формат ников (PlaceholderChat)
 # Куда: <папка сервера>\plugins\PlaceholderChat\config.yml
 # Конфиг читается ОДИН раз при включении плагина -> после правки нужен рестарт сервера.
+#
+# С этого момента PlaceholderChat отвечает ТОЛЬКО за ник над головой.
+# Формат сообщений в чате делает плагин VoidChat (локальный/глобальный чат),
+# он перебивает chatmessage на приоритете HIGHEST — так что строка ниже в игре не видна.
+# Жирный §l убран: на VoidPE жирного текста в чате нет.
 #
 # Доступные плейсхолдеры (PlaceholderAPI):
 #   %player% %player_displayname% %player_nametag% %player_uuid% %player_xuid%
@@ -17,4 +22,4 @@
 
 nametag: "§8[§6VoidPE§8] §f%player_displayname%"
 
-chatmessage: "§8[§6§lVoidPE§8] §f%player_displayname% §8» §7%message%"
+chatmessage: "§f%player_displayname%§8 » §7%message%"

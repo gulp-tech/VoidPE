@@ -1,0 +1,6 @@
+name: VoidChat
+main: voidpe.chat.VoidChat
+version: 1.0.0
+api: 3.0.0
+author: VoidPE
+description: Local chat in a radius, global chat with !
