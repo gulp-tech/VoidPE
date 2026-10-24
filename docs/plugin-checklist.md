@@ -34,7 +34,24 @@ Reach/CPS — только предупреждение с правом `astra.v
 
 Приёмка: `%money%` подставляется (видно после настройки чата/скорборда).
 
-## 3. PlaceholderChat
+## 3. PlaceholderChat — ✅ настроен
+
+`plugins/PlaceholderChat/config.yml` (см. `pnx/PlaceholderChat/config.yml`):
+
+```yaml
+nametag: "§8[§6VoidPE§8] §f%player_displayname%"
+chatmessage: "§8[§6§lVoidPE§8] §f%player_displayname% §8» §7%message%"
+```
+
+Факты из исходников:
+- конфиг читается **один раз** в конструкторе листенера → только рестарт, `/reload` не помогает;
+- плейсхолдеры `%luckperms_prefix%` **не работают**: `PlaceholderAPI` регистрирует только
+  `player_*`, `server_*`, `time`, `level_tps`, а LuckPerms-PNX не имеет placeholder-хука;
+- `%money%` появляется только если PlaceholderAPI включён **раньше** LlamaEconomy (в логе так и есть);
+- неизвестный плейсхолдер остаётся в тексте буквально.
+
+Приёмка: в чате `[VoidPE] Ник » текст`, над головой `[VoidPE] Ник`,
+`/placeholder %money%` → число.
 
 Формат чата с брендом VoidPE и префиксом из LuckPerms.
 Приёмка: в чате `§8» §6§lVoidPE §8| §fНик §8» §7текст`.
