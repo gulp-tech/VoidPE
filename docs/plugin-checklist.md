@@ -80,6 +80,25 @@ lp group default permission set essentialsnk.warp false
 5. `/ping`, `/getpos`, `/compass` → работают;
 6. `/spawn` с задержкой 5 секунд и сообщением о задержке.
 
+## 0.3. VoidMenus — меню сервера (аналог DeluxeMenus)
+
+Готовый jar: `jars/VoidMenus.jar`. Ставится сразу после Essentials, потому что кнопки меню
+вызывают его команды (`spawn`), а позже — магазин и регионы.
+
+- `/menu`, `/menu <id>`, `/menu reload` (`voidmenus.admin`);
+- меню описываются в `plugins/VoidMenus/menus.yml` (родные формы Bedrock: кнопки, картинки, `\n`);
+- действия кнопок: `player:` / `console:` / `menu:` / `message:` / `close`;
+- метки `{player} {online} {max} {tps} {ping} {motd} {world}` + PlaceholderAPI (если стоит);
+- права: `voidmenus.use` (всем), `voidmenus.admin` (оп).
+
+Приёмка:
+1. `/menu` → форма «Меню» с кнопками Спавн / Инфо / Закрыть;
+2. «Спавн» → закрывает меню и телепортит на спавн (`/spawn` от игрока);
+3. «Инфо» → второе меню, «Назад» возвращает в главное;
+4. `§7` в `content` показывает онлайн и TPS, `{ping}` — твой пинг;
+5. правка `menus.yml` + `/menu reload` → изменения видны без рестарта;
+6. `/menu nope` → «Меню nope не найдено» по-русски.
+
 ## 1. Astra (античит) — ✅ настроен
 
 Правки: `plugins/Astra/config.json`

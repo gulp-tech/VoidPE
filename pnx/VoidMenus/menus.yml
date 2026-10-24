@@ -1,0 +1,43 @@
+# VoidPE — меню сервера (плагин VoidMenus)
+# Куда: <папка сервера>\plugins\VoidMenus\menus.yml
+# После правки: /menu reload (право voidmenus.admin) — рестарт не нужен.
+
+# Метки, которые плагин подставит сам:
+#   {player} — ник, {online} — онлайн, {max} — слоты, {tps} — TPS,
+#   {ping} — пинг игрока, {motd} — motd, {world} — название мира
+# Плюс любые плейсхолдеры PlaceholderAPI, если плагин установлен (%money% и т.д.).
+
+# Действия кнопки (actions), по одному в строке:
+#   "player: spawn"            — выполнить команду от игрока
+#   "console: say привет"      — выполнить команду от консоли
+#   "menu: shop"               — открыть другое меню
+#   "message: §7текст"         — отправить сообщение игроку
+#   "close"                    — закрыть меню
+
+menus:
+
+  main:
+    title: "§8[§6VoidPE§8] §7Меню"
+    content: "§7Онлайн: §f{online}§7/§f{max}   §7TPS: §f{tps}"
+    buttons:
+      - text: "§a§lСПАВН\n§7Телепорт на спавн"
+        image: "textures/ui/icon_recipe_item"
+        actions:
+          - "player: spawn"
+      - text: "§e§lИНФО\n§7Сервер, правила, пинг"
+        image: "textures/ui/infobulb"
+        actions:
+          - "menu: info"
+      - text: "§c§lЗАКРЫТЬ"
+        image: "textures/ui/refresh"
+        actions:
+          - "close"
+
+  info:
+    title: "§8[§6VoidPE§8] §7Информация"
+    content: "§7Онлайн: §f{online}§7/§f{max}\n§7Твой пинг: §f{ping}§7 мс\n§7Мир: §f{world}\n\n§7Лайт-анархия: §fPvP и рейды разрешены\n§7Базы защищают регионы (§f/rg help§7)\n§7Читы, краши и дюпы — бан."
+    buttons:
+      - text: "§7Назад"
+        image: "textures/ui/arrow_left"
+        actions:
+          - "menu: main"
