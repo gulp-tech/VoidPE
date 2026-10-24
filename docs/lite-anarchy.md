@@ -212,6 +212,61 @@ https://github.com/PowerNukkitX-Bundle/Astra/releases/latest/download/Astra-0.0.
 
 Astra — DEV-версия, не панацея: ловит грубые флай/спид/килл-аура, но не заменяет модерацию.
 
+### 4.1a. Astra падает с `Failed to find wordlist` — что делать (проверено по исходникам)
+
+```
+java.lang.IllegalArgumentException: Failed to find wordlist
+    at org.powernukkitx.anticheat.config.MainConfig.initWordlist(MainConfig.java:165)
+```
+
+Astra при старте читает `plugins/Astra/profanity_filter.wlist` (base64 от списка слов),
+но в релизном jar этого файла нет — и плагин выключается целиком (античит не работает).
+При этом сам фильтр — заглушка: в `ChatModule#filterMessage` стоит `return message; // TODO`,
+то есть фильтрация мата ничего не делает. Поэтому правильный фикс — **выключить флаг**:
+
+```powershell
+$p = 'plugins\Astra\config.json'
+$j = Get-Content $p -Raw -Encoding UTF8 | ConvertFrom-Json
+$j.enable_chat_profanity_filtering = $false
+$j | ConvertTo-Json -Depth 10 | Set-Content $p -Encoding UTF8
+Select-String -Path $p -Pattern 'enable_chat_profanity_filtering'
+```
+
+### 4.1b. КРИТИЧНО для русского сервера: `allowed_chars`
+
+В Astra дефолтный `allowed_chars` содержит **только латиницу**. Любое сообщение с русскими
+буквами отбивается с `§cYour message contains forbidden characters` — на русском сервере
+чат просто не работает. Добавь кириллицу:
+
+```powershell
+$p = 'plugins\Astra\config.json'
+$j = Get-Content $p -Raw -Encoding UTF8 | ConvertFrom-Json
+$chars = @'
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZабвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789 .:;'(!?)+-*/=<>"|^§$%&[]{}~#_\
+'@
+$j.allowed_chars = $chars.Trim()
+$j | ConvertTo-Json -Depth 10 | Set-Content $p -Encoding UTF8
+```
+
+После правок — перезапуск сервера.
+
+Полезные ключи `plugins/Astra/config.json` (дефолты):
+
+| Ключ | Дефолт | Смысл |
+|---|---|---|
+| `max_message_length` | 100 | длина сообщения |
+| `chat_message_interval_ms` | 2000 | минимальный интервал между сообщениями |
+| `max_chat_attempts` | 5 | попыток в секунду |
+| `max_chat_messages` | 10 | сообщений в минуту |
+| `max_cps` / `cps_limit` | 20 / 10 | клики в секунду |
+| `max_actor_attack_range` | 6.0 | дальность удара |
+| `*_should_kick` | см. ниже | кикать за нарушение |
+
+Кик по умолчанию включён для: `invalid_creative_destroy_action`, `inappropriate_block_interaction_range`,
+`invalid_attack_actor`, `invalid_permission_request`, `invalid_chat`, `too_much_chat_attempts`.
+Reach/CPI (`exceeded_actor_attack_range`, `exceeded_max_cps`) — только предупреждение
+(`astra.violations`).
+
 ### 4.2 Встроенное в PNX
 
 - `player-settings.checkMovement: true` — серверная проверка движения;
