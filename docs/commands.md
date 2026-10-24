@@ -30,11 +30,38 @@ winget install --id Azul.Zulu.21.JDK -e
 cd $HOME
 mkdir VoidPE-server
 cd VoidPE-server
-curl.exe -L -o Lumi-1.6.9.jar "https://github.com/KoshakMineDEV/Lumi/releases/download/v1.6.9-19bfccbff1b6c1ae793857536050e658c198cd4e/Lumi-1.6.9.jar"
-dir
+curl.exe --ssl-no-revoke -L -o Lumi-1.6.9.jar "https://github.com/KoshakMineDEV/Lumi/releases/download/v1.6.9-19bfccbff1b6c1ae793857536050e658c198cd4e/Lumi-1.6.9.jar"
+Get-Item Lumi-1.6.9.jar | Select-Object Name, @{n='MB';e={[math]::Round($_.Length/1MB,1)}}
 ```
 
-(должен появиться `Lumi-1.6.9.jar`, ~30–60 МБ)
+Должен появиться `Lumi-1.6.9.jar` размером **~59 МБ (62 048 074 байт)**.
+Если размер 0 или файла нет — скачивание не удалось, см. блок «curl: (35) CRYPT_E_REVOCATION_OFFLINE» ниже.
+
+> Флаг `--ssl-no-revoke` нужен, потому что Windows-curl (schannel) проверяет отзыв сертификата,
+> а сервер отзыва (CRL/OCSP) у части провайдеров недоступен → ошибка `CRYPT_E_REVOCATION_OFFLINE (0x80092013)`.
+
+<details>
+<summary><b>Если curl всё равно падает</b></summary>
+
+Вариант 1 — без curl, силами PowerShell:
+
+```powershell
+Invoke-WebRequest -Uri "https://github.com/KoshakMineDEV/Lumi/releases/download/v1.6.9-19bfccbff1b6c1ae793857536050e658c198cd4e/Lumi-1.6.9.jar" -OutFile "Lumi-1.6.9.jar"
+```
+
+Вариант 2 — скачать в браузере и перенести в папку сервера:
+
+```powershell
+Move-Item "$HOME\Downloads\Lumi-1.6.9.jar" "$HOME\VoidPE-server\" -Force
+```
+
+Вариант 3 — BITS (умеет качать в фоне и докачивать):
+
+```powershell
+Start-BitsTransfer -Source "https://github.com/KoshakMineDEV/Lumi/releases/download/v1.6.9-19bfccbff1b6c1ae793857536050e658c198cd4e/Lumi-1.6.9.jar" -Destination "Lumi-1.6.9.jar"
+```
+
+</details>
 
 ### A2. Первый запуск
 
@@ -64,8 +91,11 @@ notepad settings.yml
 
 ```powershell
 mkdir plugins -ErrorAction SilentlyContinue
-curl.exe -L -o plugins/MobPlugin-1.0.0-SNAPSHOT.jar "https://github.com/LuminiaDev/MobPluginLumi/releases/download/1.0.0/MobPlugin-1.0.0-SNAPSHOT.jar"
+curl.exe --ssl-no-revoke -L -o plugins/MobPlugin-1.0.0-SNAPSHOT.jar "https://github.com/LuminiaDev/MobPluginLumi/releases/download/1.0.0/MobPlugin-1.0.0-SNAPSHOT.jar"
+Get-Item plugins/MobPlugin-1.0.0-SNAPSHOT.jar | Select-Object Name, Length
 ```
+
+Размер должен быть **331 317 байт**. Если 0 — открой ссылку в браузере и положи jar в `plugins` вручную.
 
 ### A5. Подключиться из игры
 
@@ -78,11 +108,17 @@ ipconfig
 Берём `IPv4-адрес` (например `192.168.1.50`).
 В Minecraft Bedrock: **Play → Servers → Add Server → Address: `192.168.1.50:19132`**.
 
-Чтобы заходили из интернета: проброс **UDP 19132** на роутере + открыть порт в фаерволе:
+Чтобы заходили из интернета: проброс **UDP 19132** на роутере + открыть порт в фаерволе.
+Правило требует **прав администратора** (иначе `Отказано в доступе` / `Windows System Error 5`):
 
 ```powershell
+# PowerShell, запущенный через «Запуск от имени администратора»
 New-NetFirewallRule -DisplayName "Lumi 19132 UDP" -Direction Inbound -Protocol UDP -LocalPort 19132 -Action Allow
 ```
+
+Без админских прав правило можно не создавать: при первом запуске Java Windows сама покажет
+запрос «Разрешить доступ к сети» — нажми **«Разрешить»** и отметь **частные сети**.
+Для игры с телефона в той же Wi-Fi этого достаточно.
 
 ### A6. Автозапуск (чтобы окно не закрывалось)
 
@@ -255,7 +291,8 @@ Compress-Archive -Path world*,players,plugins,settings.yml -DestinationPath "bac
 |---|---|
 | `java: command not found` / «не является внутренней командой» | Java не установлена или не в PATH → шаг A0 / B0 |
 | `UnsupportedClassVersionError` | Java старее 21 |
-| `Error: Unable to access jarfile Lumi-1.6.9.jar` | не в той папке → `ls`/`dir`, скачать заново |
+| `curl: (35) schannel: ... CRYPT_E_REVOCATION_OFFLINE (0x80092013)` | добавь `--ssl-no-revoke`, либо качай через `Invoke-WebRequest` / браузер (см. A1) |
+| `Error: Unable to access jarfile Lumi-1.6.9.jar` | файла нет (скачивание упало) или не в той папке → `dir`, скачать заново |
 | Порт занят / сервер не стартует | другой сервер уже слушает 19132 → `ss -lunp \| grep 19132` (Linux) / `netstat -ano \| findstr 19132` (Win) |
 | В игре «Unable to connect» на своём ПК | в адрес сервера пиши `127.0.0.1:19132` |
 | Друзья снаружи не заходят | порт **UDP** 19132 не проброшен/не открыт; проверь `ufw` и роутер |
