@@ -93,6 +93,24 @@ Set-Content -Path start.bat -Encoding ASCII -Value @(
 Get-Content start.bat    # проверь, что 4 строки, без кавычек в начале
 ```
 
+Если в консоли при старте мелькает `"'" не является внутренней или внешней командой` —
+в `.bat` попала лишняя строка с кавычкой. Найди её и перезапиши файл начисто:
+
+```powershell
+Remove-Item start.bat -Force -ErrorAction SilentlyContinue
+$bat = @(
+    '@echo off'
+    'cd /d "%~dp0"'
+    'java -Xms2G -Xmx2G -XX:+UseG1GC -jar Lumi-1.6.9.jar'
+    'pause'
+)
+[IO.File]::WriteAllLines((Join-Path $PWD 'start.bat'), $bat)
+Get-Content .\start.bat | ForEach-Object { "[" + $_ + "]" }
+```
+
+Ожидаемый вывод — ровно 4 строки в квадратных скобках, без кавычек.
+Проверить, есть ли в файле строки, начинающиеся с `'`: `findstr /n "^'" start.bat` (пусто = чисто).
+
 Автопоиск jar (не придётся править при обновлении версии):
 
 ```powershell
