@@ -24,10 +24,21 @@ Enabling MobPlugin v1.0.0-SNAPSHOT
 
 ## Проверка 1. AI вообще жив? (`/summon`)
 
-В консоли сервера (или в игре с OP), стоя на месте:
+> ⚠️ **Из консоли сервера `/summon` в Lumi падает** (баг ядра, к мобам отношения не имеет):
+> у консоли нет загруженного чанка, и `SummonCommand.java:58` бросает
+> `NullPointerException: Cannot invoke "FullChunk.isLoaded()" because Position.getChunk() is null`.
+> Проверять надо **в игре**.
+
+В игре (нужен OP — `op ТвойНик` в консоли), стоя на месте:
 
 ```
-summon minecraft:zombie ~ ~ ~
+/summon minecraft:zombie
+```
+
+или чуть впереди себя:
+
+```
+/summon minecraft:zombie ~ ~ ~3
 ```
 
 - **Зомби пошёл к тебе** → AI работает, а «без ИИ» были мобы ядра (спавненные до установки
@@ -137,9 +148,31 @@ cd MobPluginLumi
 
 ---
 
+## Известный баг Lumi: `/summon` из консоли
+
+```
+[ERROR] Unhandled exception executing command 'summon minecraft:zombie' in summon:
+java.lang.NullPointerException: Cannot invoke "cn.nukkit.level.format.FullChunk.isLoaded()"
+because the return value of "cn.nukkit.level.Position.getChunk()" is null
+    at cn.nukkit.command.defaults.SummonCommand.execute(SummonCommand.java:58)
+```
+
+Причина: `CommandSender#getPosition()` у консоли указывает на позицию в мире, чанк которой
+не загружен (нет игроков / чанк спавна выгружен), `pos.getChunk()` возвращает `null`,
+а `SummonCommand` это не проверяет. В игре с OP та же команда работает — там чанк игрока загружен.
+
+Обходы:
+1. Выполнять `/summon` **в игре**, не в консоли.
+2. Спавнить яйцом (креатив) или блоком-спавнером.
+3. Из консоли — сначала зайти игроком, затем `summon minecraft:zombie <x> <y> <z>`
+   в загруженной области.
+
+Это баг-репорт для апстрима: https://github.com/KoshakMineDEV/Lumi/issues
+(приложить стек + версию 1.6.9).
+
 ## Итог: что делать по шагам
 
-1. `/summon minecraft:zombie` рядом с собой → пошёл или стоит?
+1. В игре (не в консоли!) `/summon minecraft:zombie` → пошёл или стоит?
 2. Если стоит — ищи в `logs/latest.log` `NoSuchMethodError`/`AbstractMethodError` от `nukkitcoders`.
 3. Есть ошибки → нужен MobPlugin под Lumi 1.6.x (Discord Lumi / сборка из исходников).
 4. Нет ошибок → подними `chunk.ticking-radius` до 6 и проверь `difficulty: NORMAL`.
