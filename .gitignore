@@ -47,3 +47,7 @@ pnx/libs/*.jar
 pnx/*.log
 pnx/server.lock
 pnx/backup-*.zip
+
+# PNX anarchy script backups
+pnx/pnx.yml.bak-*
+pnx/backup-*.zip
