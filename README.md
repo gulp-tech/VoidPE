@@ -1,7 +1,23 @@
-# VoidPE — сервер Minecraft Bedrock на ядре Lumi
+# VoidPE — сервер Minecraft Bedrock (Lumi / PowerNukkitX)
 
-Репозиторий-заготовка для сервера **Minecraft Bedrock Edition** на ядре [Lumi](https://github.com/KoshakMineDEV/Lumi).
-Здесь лежит: стартовые скрипты, конфиг, `.gitignore` и инструкции — чтобы не собирать всё с нуля.
+> **Переходишь на PowerNukkitX?** Готовый гайд: **[`docs/pnx.md`](docs/pnx.md)** +
+> папка [`pnx/`](pnx/) со скриптами (`start.bat`, `download.ps1`).
+
+## Два ядра — что выбрать
+
+| | Lumi | PowerNukkitX |
+|---|---|---|
+| ИИ мобов | нет в ядре (нужен MobPlugin) | **есть из коробки** |
+| Конфиг | `settings.yml` | `pnx.yml` |
+| Версии Minecraft | мультиверсия 1.20.0–1.26.50 | только актуальная (3.0.5 → 1.26.50) |
+| API плагинов | Nukkit-MOT (`cn.nukkit.*`) | PNX (`org.powernukkitx.*`) |
+| Плагины | Nukkit-MOT + `[Lumi]` | [powernukkitx.org/plugins](https://powernukkitx.org/plugins) |
+| Гайд | этот файл | [`docs/pnx.md`](docs/pnx.md) |
+
+Ниже — про **Lumi**. Про PNX — отдельный документ, чтобы не путать конфиги.
+
+Репозиторий-заготовка для сервера **Minecraft Bedrock Edition**: стартовые скрипты, конфиги,
+`.gitignore` и инструкции — чтобы не собирать всё с нуля.
 
 > ⚠️ Lumi — это **Bedrock (PE)**, а не Java. Плагины от Paper/Spigot сюда **не подходят**.
 > Lumi — хард-форк Nukkit-MOT, поэтому подходят плагины Nukkit-MOT (и большинство старых Nukkit-плагинов).
@@ -126,7 +142,11 @@ features:
 .
 ├── README.md              # этот файл
 ├── docs/
-│   └── plugin-dev.md      # как писать свой плагин под Lumi
+│   ├── plugin-dev.md      # как писать свой плагин под Lumi
+│   ├── commands.md        # команды по шагам (Windows/Linux)
+│   ├── mobs.md            # почему мобы без ИИ на Lumi + диагностика
+│   └── pnx.md             # PowerNukkitX: установка и настройка
+├── pnx/                   # скрипты для PowerNukkitX
 └── server/                # рабочий каталог сервера (сам jar и миры не в git)
     ├── download.sh        # скачать/обновить Lumi
     ├── download.cmd
@@ -136,6 +156,14 @@ features:
 ```
 
 Запуск с другим объёмом памяти: `RAM=6G ./start.sh` (Windows: правишь `-Xmx` в `start.cmd`).
+
+Для PowerNukkitX структура другая:
+
+```
+pnx/
+├── start.bat        # запуск с обязательными --add-opens
+└── download.ps1     # скачать/обновить powernukkitx.jar
+```
 
 ---
 
@@ -148,3 +176,4 @@ features:
 | `UnsupportedClassVersionError` | Java старее 21 |
 | Плагин не грузится | собран под Paper/Spigot, либо `api` в `plugin.yml` несовместим с версией Lumi |
 | Лаги при 20+ игроках | `view-distance: 6`, `chunk.sending-per-tick`, память ≥4 ГБ, NVMe-диск под миры |
+| Мобы стоят и не двигаются | см. [`docs/mobs.md`](docs/mobs.md); или перейти на PowerNukkitX — там ИИ в ядре |

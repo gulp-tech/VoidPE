@@ -33,3 +33,17 @@ out/
 Thumbs.db
 .vscode/
 *.swp
+
+# ===== PowerNukkitX =====
+pnx/powernukkitx.jar
+pnx/pnx.yml
+pnx/worlds/
+pnx/players/
+pnx/plugins/**
+!pnx/plugins/.gitkeep
+pnx/logs/
+pnx/crashdumps/
+pnx/libs/*.jar
+pnx/*.log
+pnx/server.lock
+pnx/backup-*.zip
