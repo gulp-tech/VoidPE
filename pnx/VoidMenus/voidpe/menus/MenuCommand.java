@@ -9,9 +9,10 @@ public class MenuCommand extends Command {
     private final VoidMenus plugin;
 
     public MenuCommand(VoidMenus plugin) {
-        super("menu");
+        super("menu", "Открыть меню сервера", "/menu [id]");
         this.plugin = plugin;
-        this.setDescription("Открыть меню сервера");
+        // второй ярлык на случай, если "menu" занят другой командой
+        this.setAliases(new String[]{"menus"});
         this.setPermission("voidmenus.use");
     }
 

@@ -33,14 +33,30 @@ public class VoidMenus extends PluginBase {
 
     @Override
     public void onEnable() {
-        this.getDataFolder().mkdirs();
-        this.menusFile = new File(this.getDataFolder(), "menus.yml");
-        if (!this.menusFile.exists()) {
-            this.saveResource("menus.yml", false);
+        try {
+            this.getDataFolder().mkdirs();
+            this.menusFile = new File(this.getDataFolder(), "menus.yml");
+            if (!this.menusFile.exists()) {
+                this.saveResource("menus.yml", false);
+            }
+        } catch (Throwable t) {
+            this.getLogger().error("VoidMenus: не удалось создать menus.yml: " + t);
         }
-        this.loadMenus();
-        this.getServer().getCommandMap().register("voidmenus", new MenuCommand(this));
-        this.getLogger().info("VoidMenus enabled. menus=" + this.menus.size());
+
+        try {
+            this.loadMenus();
+        } catch (Throwable t) {
+            this.getLogger().error("VoidMenus: ошибка в menus.yml (проверь отступы и кавычки): " + t);
+        }
+
+        try {
+            boolean registered = this.getServer().getCommandMap().register("voidmenus", new MenuCommand(this));
+            this.getLogger().info("VoidMenus enabled. menus=" + this.menus.size()
+                    + ", menu=" + (this.menus.containsKey("main") ? "main" : "нет главного меню")
+                    + ", command registered=" + registered);
+        } catch (Throwable t) {
+            this.getLogger().error("VoidMenus: не удалось зарегистрировать команду /menu: " + t);
+        }
     }
 
     // ------------------------------------------------------------------ config
@@ -121,10 +137,10 @@ public class VoidMenus extends PluginBase {
             String value = this.render(player, action.value);
             switch (action.type) {
                 case "player":
-                    this.getServer().dispatchCommand(player, value);
+                    this.getServer().getCommandMap().executeCommand(player, value);
                     break;
                 case "console":
-                    this.getServer().dispatchCommand(this.getServer().getConsoleSender(), value);
+                    this.getServer().getCommandMap().executeCommand(this.getServer().getConsoleSender(), value);
                     break;
                 case "menu":
                     this.open(player, value);
