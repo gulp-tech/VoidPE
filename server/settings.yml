@@ -1,0 +1,101 @@
+# VoidPE — заготовка конфига Lumi.
+# Lumi при старте: сохранит недостающие ключи со значениями по умолчанию
+# и УДАЛИТ неизвестные (свойство withRemoveOrphans = true).
+# Полный актуальный список: src/main/java/cn/nukkit/settings в репозитории Lumi.
+
+general:
+  motd: "§aVoidPE §7| §fBedrock"
+  sub-motd: "Powered by Lumi"
+  server-ip: "0.0.0.0"
+  server-port: 19132
+  max-players: 50
+  language: "rus"
+  force-language: false
+  debug-level: 1
+  enable-spark: false
+  use-waterdog: false
+  server-authoritative-movement: "server-auth"
+  server-authoritative-block-breaking: true
+  multiversion:
+    min-protocol: 0
+    max-protocol: -1
+
+network:
+  xbox-auth: true
+  xbox-auth-temp-ip-ban-on-failed: false
+  strong-ip-bans: false
+  enable-query: true
+  query-plugins: false
+  encryption: false
+  timeout-milliseconds: 25000
+  rak-packet-limit: 2000
+  rcon:
+    enable: false
+    port: 19132
+  compression:
+    zlib-provider: 2
+    compression-level: 5
+    compression-threshold: 256
+    use-snappy-compression: false
+
+player:
+  default-gamemode: 0
+  force-gamemode: false
+  whitelist: false
+  whitelist-reason: "§cСервер на тех. работах"
+  save-player-data: true
+  save-player-data-by-uuid: true
+  skin-change-cooldown: 15
+  allow-flight: false
+  op-in-game: true
+  stop-in-game: false
+  forced-safety-enchant: true
+  space-name-mode: "IGNORE"
+
+world:
+  default-world-name: "world"
+  default-world-seed: ""
+  default-world-type: "default"
+  generator-settings: ""
+  load-all-worlds: false
+  view-distance: 8
+  spawn-protection: 10
+  difficulty: NORMAL
+  allow-pvp: true
+  enable-hardcore: false
+  enable-nether: true
+  enable-end: true
+  explosion-break-blocks: false
+  portal-ticks: 80
+  do-world-gc: true
+  light-updates: true
+  leveldb-cache-mb: 80
+  chunk:
+    cache-chunks: false
+    async-chunks: true
+    compression-level: 0
+    spawn-chunks-threshold: 56
+    sending-per-tick: 4
+    ticking-per-tick: 40
+    ticking-radius: 3
+    generation-queue-size: 8
+    generation-population-queue-size: 8
+  auto-save:
+    enable: true
+    per-ticks: 6000
+    disabled-worlds: []
+
+performance:
+  async-workers: "auto"
+  auto-tick-rate: true
+  auto-tick-rate-limit: 20
+  base-tick-rate: 1
+  always-tick-players: false
+  thread-watchdog: true
+  thread-watchdog-tick: 60000
+
+features:
+  enable-experiment-mode: true
+  vanilla-portals: true
+  enable-new-paintings: true
+  enable-new-chicken-eggs-laying: true

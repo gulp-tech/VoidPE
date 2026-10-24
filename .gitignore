@@ -1,0 +1,35 @@
+# ===== рабочий каталог сервера =====
+server/*.jar
+server/worlds/
+server/players/
+server/logs/
+server/plugins/**
+!server/plugins/.gitkeep
+server/crashdumps/
+server/tmp/
+server/*.log
+server/*.log.gz
+server/banned-players.json
+server/banned-ips.json
+server/ops.txt
+server/white-list.txt
+server/permissions.yml
+server/scoreboard.json
+server/resource_packs/
+server/.console_history
+
+# ===== Java / Gradle (разработка плагинов) =====
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+out/
+*.class
+*.iml
+.idea/
+*.hprof
+
+# ===== ОС / редакторы =====
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
