@@ -352,7 +352,7 @@ Select-String -Path plugins\LlamaEconomy\config.yml -Pattern 'MonetaryUnit|Defau
 
 ### 4.1c. Локальный / глобальный чат (плагин VoidChat)
 
-Готового плагина под радиус чата в PNX нет, поэтому стоит свой микроплагин (исходники `pnx/VoidChat/`).
+Готовый jar лежит в `jars/VoidChat.jar` (собран заранее, компилировать на сервере не нужно).
 PlaceholderChat удалён — VoidChat делает и чат, и ник над головой.
 
 - без `!` → локальный чат, радиус 100 блоков (тот же мир) + консоль;
@@ -362,4 +362,4 @@ PlaceholderChat удалён — VoidChat делает и чат, и ник на
   `BaseLang.parseLanguageText` съедает `%<слово>` раньше, чем `tr` подставит аргументы;
 - жирного `§l` нигде нет.
 
-Пошаговая установка и приёмка — `docs/plugin-checklist.md`, п. 3b.
+Настройка — `plugins/VoidChat/config.yml`, установка и приёмка — `docs/plugin-checklist.md`, п. 3b.
