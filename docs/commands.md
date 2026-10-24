@@ -79,15 +79,30 @@ curl.exe --ssl-no-revoke -L -o Lumi-1.6.9.jar "https://github.com/KoshakMineDEV/
 Get-Item Lumi-1.6.9.jar | Select-Object Name, @{n='MB';e={[math]::Round($_.Length/1MB,1)}}
 ```
 
-И создать `start.bat`, чтобы потом запускать двойным кликом:
+И создать `start.bat`, чтобы потом запускать двойным кликом
+(здесь специально без here-string `@'...'@` — при вставке в консоль он иногда ломается
+и в .bat попадает лишняя кавычка, из-за чего сервер ругается `"'" не является внутренней ... командой`):
 
 ```powershell
-@'
-@echo off
-cd /d "%~dp0"
-java -Xms2G -Xmx2G -XX:+UseG1GC -jar Lumi-1.6.9.jar
-pause
-'@ | Set-Content -Path start.bat -Encoding ASCII
+Set-Content -Path start.bat -Encoding ASCII -Value @(
+    '@echo off',
+    'cd /d "%~dp0"',
+    'java -Xms2G -Xmx2G -XX:+UseG1GC -jar Lumi-1.6.9.jar',
+    'pause'
+)
+Get-Content start.bat    # проверь, что 4 строки, без кавычек в начале
+```
+
+Автопоиск jar (не придётся править при обновлении версии):
+
+```powershell
+Set-Content -Path start.bat -Encoding ASCII -Value @(
+    '@echo off',
+    'cd /d "%~dp0"',
+    'for %%f in (Lumi-*.jar) do set "JAR=%%f"',
+    'java -Xms2G -Xmx2G -XX:+UseG1GC -jar "%JAR%"',
+    'pause'
+)
 ```
 
 > На русской Windows рабочий стол может быть в `C:\Users\<имя>\OneDrive\Рабочий стол` —
@@ -128,6 +143,16 @@ Get-Item plugins/MobPlugin-1.0.0-SNAPSHOT.jar | Select-Object Name, Length
 Размер должен быть **331 317 байт**. Если 0 — открой ссылку в браузере и положи jar в `plugins` вручную.
 
 ### A5. Подключиться из игры
+
+Признак успешного запуска в логе:
+
+```
+[INFO] Opening server on 0.0.0.0:19132
+[INFO] Done (4.518s)! For help, type "help"
+```
+
+`Level "world" not found` при первом старте — это НОРМАЛЬНО: ядро создаёт миры с нуля.
+
 
 Узнать IP компьютера в локальной сети:
 
