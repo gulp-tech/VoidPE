@@ -27,11 +27,51 @@
 
 ## 2. Конфиг анархии (одна команда)
 
-В папке сервера (`C:\Users\Рустам\Desktop\PNX`):
+⚠️ PowerShell стартует в `C:\WINDOWS\system32` — оттуда скрипт не найдётся
+(`Аргумент ".\anarchy-config.ps1" для параметра -File не существует`).
+Сначала перейди в папку сервера:
+
+```powershell
+cd "$([Environment]::GetFolderPath('Desktop'))\PNX"
+pwd
+```
+
+### Вариант А — если файл `anarchy-config.ps1` лежит в папке PNX
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\anarchy-config.ps1
 ```
+
+### Вариант Б — без файла, вставить целиком в PowerShell (из папки PNX)
+
+```powershell
+$targets = [ordered]@{
+  'motd'='ANARCHY'; 'maxPlayers'='100'; 'xboxAuth'='true'; 'autosaveDelay'='6000'
+  'savePlayerData'='true'; 'checkMovement'='true'; 'forceSkinTrusted'='true'; 'spawnRadius'='32'
+  'spawnProtection'='0'; 'pvp'='true'; 'difficulty'='3'; 'gamemode'='0'; 'forceGamemode'='false'
+  'enableExplosionBlockDamage'='true'; 'enableEntitySpawning'='true'; 'viewDistance'='6'
+  'entitySpawnCap'='512'; 'chunkUnloadDelay'='15000'; 'tickRadius'='4'
+  'query'='true'; 'queryPlugins'='false'; 'announceAchievements'='false'
+}
+if (Get-CimInstance Win32_Process -Filter "Name='java.exe'" | Where-Object { $_.CommandLine -match 'powernukkitx\.jar' }) {
+  'СЕРВЕР ЗАПУЩЕН — сначала stop в его консоли!'
+} else {
+  Copy-Item pnx.yml "pnx.yml.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+  $lines = Get-Content pnx.yml; $changed=@(); $missing=@()
+  foreach ($k in $targets.Keys) {
+    $re = '^(\s*' + [regex]::Escape($k) + '\s*:\s*)(\S.*)$'; $hit=$false
+    for ($i=0; $i -lt $lines.Count; $i++) {
+      if ($lines[$i] -match $re) { $lines[$i] = $matches[1] + $targets[$k]; $changed += "$k -> $($targets[$k])"; $hit=$true; break }
+    }
+    if (-not $hit) { $missing += $k }
+  }
+  [IO.File]::WriteAllLines((Join-Path $PWD 'pnx.yml'), $lines)
+  'ИЗМЕНЕНО:'; $changed; 'НЕ НАЙДЕНО (проверь вручную):'; $missing
+}
+```
+
+`[IO.File]::WriteAllLines` пишет UTF-8 **без BOM** — важно, `Set-Content -Encoding UTF8`
+в PowerShell 5.1 добавляет BOM и YAML-парсер PNX может ругнуться.
 
 Скрипт лежит в репозитории как `pnx/anarchy-config.ps1` — скопируй его в папку PNX рядом
 с `pnx.yml`. Что он делает:
