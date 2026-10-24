@@ -101,7 +101,8 @@ features:
 
 - Кидаешь `.jar` в `server/plugins/`, перезапускаешь сервер.
 - **Обязательно к установке:** [MobPluginLumi](https://github.com/LuminiaDev/MobPluginLumi/releases) —
-  мобы (в самом Lumi поддержка мобов ещё WIP).
+  мобы (в самом Lumi поддержка мобов ещё WIP, у мобов ядра нет ИИ).
+  Если мобы стоят на месте — см. [`docs/mobs.md`](docs/mobs.md).
 - Полезные библиотеки от той же команды: `FakeInventories` (фейковые GUI-инвентари),
   `Placeholders`, `Basics`, `DynamicEconomy`.
 - Готовые плагины под Lumi ищи на форуме talk.24serv.pro (раздел «Плагины», в названии темы метка `[Lumi]`).
