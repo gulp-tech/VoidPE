@@ -27,13 +27,36 @@
 
 Сервер **остановить** (`stop`), затем в папке `PNX`:
 
-```powershell
-cd "$([Environment]::GetFolderPath('Desktop'))\PNX"
-powershell -ExecutionPolicy Bypass -File .\lite-anarchy-config.ps1
-```
+Скрипт `pnx/lite-anarchy-config.ps1` требует, чтобы файл лежал в папке PNX. Если его там нет,
+используй **inline-вариант** (вставляется прямо в PowerShell, из папки PNX):
 
-Файл `pnx/lite-anarchy-config.ps1` — из репозитория (положить в папку PNX).
-Он меняет только существующие ключи и делает бэкап `pnx.yml`.
+```powershell
+$targets = [ordered]@{
+  'motd'='§6§lLITE ANARCHY §8| §fvoidpe'; 'maxPlayers'='100'; 'xboxAuth'='true'
+  'savePlayerData'='true'; 'checkMovement'='true'; 'forceSkinTrusted'='true'; 'spawnRadius'='16'
+  'spawnProtection'='32'; 'pvp'='true'; 'difficulty'='2'; 'gamemode'='0'; 'forceGamemode'='false'
+  'enableExplosionBlockDamage'='true'; 'enableRedstone'='true'; 'tickRedstone'='true'
+  'enableCommandBlocks'='false'; 'enableEntitySpawning'='true'; 'viewDistance'='6'
+  'overrideServerAuthBlockBreaking'='true'; 'packetLimit'='4000'; 'globalPacketLimit'='100000'
+  'entitySpawnCap'='512'; 'chunkUnloadDelay'='15000'; 'tickRadius'='4'
+  'enableQuery'='true'; 'queryPlugins'='false'; 'announceAchievements'='false'
+}
+if (Get-CimInstance Win32_Process -Filter "Name='java.exe'" | Where-Object { $_.CommandLine -match 'powernukkitx\.jar' }) {
+  'СЕРВЕР ЗАПУЩЕН — сначала stop в его консоли!'
+} else {
+  Copy-Item pnx.yml "pnx.yml.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+  $lines = Get-Content pnx.yml; $changed=@(); $missing=@()
+  foreach ($k in $targets.Keys) {
+    $re = '^(\s*' + [regex]::Escape($k) + '\s*:\s*)(\S.*)$'; $hit=$false
+    for ($i=0; $i -lt $lines.Count; $i++) {
+      if ($lines[$i] -match $re) { $lines[$i] = $matches[1] + $targets[$k]; $changed += "$k -> $($targets[$k])"; $hit=$true; break }
+    }
+    if (-not $hit) { $missing += $k }
+  }
+  [IO.File]::WriteAllLines((Join-Path $PWD 'pnx.yml'), $lines)
+  'ИЗМЕНЕНО:'; $changed; 'НЕ НАЙДЕНО:'; $missing
+}
+```
 
 Ключевые отличия от «хаос»-скрипта:
 
@@ -223,10 +246,21 @@ Astra — DEV-версия, не панацея: ловит грубые фла�
 Что внутри: префикс `§8» §6§lVoidPE §8| §e`, все сообщения на русском,
 стартовый баланс `1000`, валюта `$`, алиасы `/bal`, `/baltop`, `/pay`.
 
+Вставлять содержимое файлов из репозитория вручную (или копировать, если файлы уже в папке PNX):
+
 ```powershell
 cd "$([Environment]::GetFolderPath('Desktop'))\PNX"
-Copy-Item .\LlamaEconomy\messages.yml .\plugins\LlamaEconomy\messages.yml -Force
-Copy-Item .\LlamaEconomy\config.yml   .\plugins\LlamaEconomy\config.yml   -Force
+notepad plugins\LlamaEconomy\messages.yml    # Ctrl+A, вставить текст, Ctrl+S
+```
+
+Для `config.yml` безопаснее не заменять файл целиком, а поправить две строки:
+
+```powershell
+$c = Get-Content plugins\LlamaEconomy\config.yml
+$c = $c -replace '^MonetaryUnit:.*', 'MonetaryUnit: "$"'
+$c = $c -replace '^DefaultMoney:.*', 'DefaultMoney: 1000.0'
+[IO.File]::WriteAllLines((Join-Path $PWD 'plugins\LlamaEconomy\config.yml'), $c)
+Select-String -Path plugins\LlamaEconomy\config.yml -Pattern 'MonetaryUnit|DefaultMoney'
 ```
 
 - `messages.yml` применяется **без рестарта**: `/lecoreload`;
